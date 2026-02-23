@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a2e;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden; 
+    touch-action: manipulation; /* مهم جداً لسرعة اللمس في الموبايل */
+}
+
+#ui {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.stat {
+    font-size: clamp(18px, 5vw, 24px); /* حجم خط مرن للموبايل واللاب توب */
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+#game-canvas {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    position: relative;
+    cursor: crosshair;
+}
+
+/* شكل الدائرة */
+.target {
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s;
+    box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.target:active {
+    transform: scale(0.8); /* تأثير عند الضغط باللمس أو الماوس */
+}
