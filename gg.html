@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لعبة صيد الدوائر السريعة</title>
+    <style>
+        /* CSS: التصميم المتجاوب */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a2e;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* لمنع التمرير في الموبايل */
+            touch-action: manipulation; /* لتحسين استجابة اللمس */
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            pointer-events: none; /* لكي لا تعيق الضغط */
+            z-index: 10;
+        }
+
+        .stat {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #game-canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            cursor: crosshair;
+        }
+
+        /* شكل الدائرة */
+        .target {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        .target:active {
+            transform: scale(0.8);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">
+        <span class="stat">النقاط: <span id="score">0</span></span>
+        <span class="stat">الوقت: <span id="timer">30</span>s</span>
+    </div>
+
+    <div id="game-canvas"></div>
+
+    <script>
+        // JavaScript: منطق اللعبة
+        let score = 0;
+        let timeLeft = 30;
+        let gameActive = true;
+        const canvas = document.getElementById('game-canvas');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+
+        // دالة لإنشاء دائرة في مكان عشوائي
+        function createTarget() {
+            if (!gameActive) return;
+
+            const target = document.createElement('div');
+            target.className = 'target';
+            
+            // تحديد حجم عشوائي (بين 40 و 80 بكسل) مناسب للموبايل
+            const size = Math.floor(Math.random() * 40) + 40;
+            
+            // ألوان عشوائية مبهجة
+            const colors = ['#ff0055', '#00fbff', '#4eff00', '#ffff00', '#ff00ff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            // تحديد الموقع (مع مراعاة حواف الشاشة)
+            const x = Math.random() * (window.innerWidth - size);
+            const y = Math.random() * (window.innerHeight - size - 60) + 60;
+
+            target.style.width = size + 'px';
+            target.style.height = size + 'px';
+            target.style.backgroundColor = color;
+            target.style.left = x + 'px';
+            target.style.top = y + 'px';
+
+            // إضافة حدث الضغط (يعمل للماوس واللمس)
+            target.onclick = function() {
+                if (gameActive) {
+                    score++;
+                    scoreDisplay.innerText = score;
+                    this.remove(); // حذف الدائرة عند الضغط
+                    createTarget(); // إنشاء واحدة جديدة فوراً
+                }
+            };
+
+            canvas.appendChild(target);
+
+            // الدائرة تختفي تلقائياً بعد ثانيتين إذا لم تُضغط
+            setTimeout(() => {
+                if (target.parentElement) {
+                    target.remove();
+                    createTarget();
+                }
+            }, 2000);
+        }
+
+        // عداد الوقت
+        const countDown = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countDown);
+                endGame();
+            }
+        }, 1000);
+
+        function endGame() {
+            gameActive = false;
+            alert("انتهى الوقت! مجموع نقاطك: " + score);
+            location.reload();
+        }
+
+        // نبدأ بإنشاء 3 دوائر في البداية
+        for(let i=0; i<3; i++) {
+            createTarget();
+        }
+    </script>
+</body>
+</html>
